@@ -97,7 +97,7 @@ public struct SlidingCover<SlidingView: View, CoveredView: View>: View {
     @Environment(\.layoutDirection) var layoutDirection: LayoutDirection
     
     public init(
-        config: SlidingCoverConfig?,
+        config: SlidingCoverConfig? = nil,
         isSlided: Binding<Bool>,
         sliding: @escaping () -> SlidingView,
         covered: @escaping () -> CoveredView
@@ -125,6 +125,7 @@ public struct SlidingCover<SlidingView: View, CoveredView: View>: View {
             
             ZStack(alignment: alignment) {
                 covered()
+                    .frame(width: g.size.width, height: g.size.height)
                 sliding()
                     .offset(
                         x: offsetX, y: offsetY
