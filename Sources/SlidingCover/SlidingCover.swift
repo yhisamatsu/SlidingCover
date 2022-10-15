@@ -1,10 +1,20 @@
 import SwiftUI
 
 @available(iOS 13.0, *)
-public struct SlidingConfig {
-    let direction: SlidingDirection
-    let amount: CGFloat
-    var animation: Animation? = .easeOut
+public struct SlidingCoverConfig {
+    public let direction: SlidingDirection
+    public let amount: CGFloat
+    public let animation: Animation?
+    
+    public init(
+        direction: SlidingDirection,
+        amount: CGFloat,
+        animation: Animation? = .easeOut
+    ) {
+        self.direction = direction
+        self.amount = amount
+        self.animation = animation
+    }
 }
 
 @available(iOS 13.0, *)
@@ -76,7 +86,7 @@ private struct SlidingSize {
 
 @available(iOS 13.0, *)
 public struct SlidingCover<SlidingView: View, CoveredView: View>: View {
-    public var config: SlidingConfig = SlidingConfig(
+    public var config: SlidingCoverConfig = SlidingCoverConfig(
         direction: .down,
         amount: 0.33
     )
@@ -85,6 +95,20 @@ public struct SlidingCover<SlidingView: View, CoveredView: View>: View {
     public var covered: () -> CoveredView
     
     @Environment(\.layoutDirection) var layoutDirection: LayoutDirection
+    
+    public init(
+        config: SlidingCoverConfig?,
+        isSlided: Binding<Bool>,
+        sliding: @escaping () -> SlidingView,
+        covered: @escaping () -> CoveredView
+    ) {
+        if let config = config {
+            self.config = config
+        }
+        self._isSlided = isSlided
+        self.sliding = sliding
+        self.covered = covered
+    }
     
     public var body: some View {
         GeometryReader { g in
@@ -132,7 +156,7 @@ struct SlidingCover_Previews: PreviewProvider {
                 
                 HStack {
                     SlidingCover(
-                        config: SlidingConfig(
+                        config: SlidingCoverConfig(
                             direction: .down, amount: 0.4
                         ),
                         isSlided: $isSlided,
@@ -142,7 +166,7 @@ struct SlidingCover_Previews: PreviewProvider {
                     .frame(width: width, height: height)
                     
                     SlidingCover(
-                        config: SlidingConfig(
+                        config: SlidingCoverConfig(
                             direction: .up, amount: 0.33,
                             animation: .easeInOut(duration: 0.5)
                         ),
@@ -154,7 +178,7 @@ struct SlidingCover_Previews: PreviewProvider {
                 }
                 HStack {
                     SlidingCover(
-                        config: SlidingConfig(
+                        config: SlidingCoverConfig(
                             direction: .right, amount: 0.5,
                             animation: .linear(duration: 0.15)
                         ),
@@ -164,7 +188,7 @@ struct SlidingCover_Previews: PreviewProvider {
                     )
                     .frame(width: width, height: height)
                     SlidingCover(
-                        config: SlidingConfig(
+                        config: SlidingCoverConfig(
                             direction: .left, amount: 0.45,
                             animation: .spring(response: 0.25, dampingFraction: 0.4)
                         ),
